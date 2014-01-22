@@ -7,9 +7,11 @@
   <sounds name="sound"/>
   <sprites name="sprites">
     <sprite>sprites\sprPlayer</sprite>
+    <sprite>sprites\sprPlayer_Alt</sprite>
     <sprite>sprites\sprEnemyRoam</sprite>
     <sprite>sprites\sprEnemyRun</sprite>
     <sprite>sprites\sprEnemyChase</sprite>
+    <sprite>sprites\sprEnemyChase_Alt</sprite>
     <sprite>sprites\sprWall</sprite>
     <sprite>sprites\sprElevator</sprite>
   </sprites>
