@@ -16,7 +16,6 @@ void setup()
   output1 = createWriter("allDepthData.txt");
   output2 = createWriter("avgDepthData.txt");
   
-  // enable depthMap generation 
   context.enableDepth();
   
   println(context.depthHeight(),context.depthWidth());
