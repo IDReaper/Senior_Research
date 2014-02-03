@@ -27,7 +27,7 @@ void setup()
   
   println(context.depthHeight(),context.depthWidth());
   
-  String[] stuff = loadStrings("C:/Users/Dae/Documents/GitHub/Test_Repo/CSC490/Kinect/StaticEnv/avgDepthData.txt");
+  String[] stuff = loadStrings("C:/Users/[USER]/Documents/GitHub/Test_Repo/CSC490/Kinect/StaticEnv/avgDepthData.txt");
   averageDepth = int(split(stuff[0],' '));
 //  int[][] combinedDepth = new int[100][307200];
 //  for (int i = 0; i<100;i++) {
