@@ -41,6 +41,15 @@ void setup()
   for (int i = 0; i<context.depthWidth()*context.depthHeight();i++){
      averageDepth[i] /= 100;
   }
+//  int[] data;
+
+//  void setup() {
+//	 size(200,200);
+	 // Load text file as a string
+//	 String[] stuff = loadStrings("data.txt");
+	 // Convert string into an array of integers using ',' as a delimiter
+//	 data = int(split(stuff[0],','));
+//   }
 
   stroke(255,255,255);
   smooth();
