@@ -27,29 +27,22 @@ void setup()
   
   println(context.depthHeight(),context.depthWidth());
   
-  int[][] combinedDepth = new int[100][307200];
-  for (int i = 0; i<100;i++) {
-    context.update();
-    int[]   depthMap = context.depthMap();
-    combinedDepth[i] = depthMap;
-  }
-  for (int i = 0; i<100;i++){
-    for (int x = 0; x<context.depthWidth()*context.depthHeight();x++){
-      averageDepth[x]+=combinedDepth[i][x];
-    }
-  }
-  for (int i = 0; i<context.depthWidth()*context.depthHeight();i++){
-     averageDepth[i] /= 100;
-  }
-//  int[] data;
-
-//  void setup() {
-//	 size(200,200);
-	 // Load text file as a string
-//	 String[] stuff = loadStrings("data.txt");
-	 // Convert string into an array of integers using ',' as a delimiter
-//	 data = int(split(stuff[0],','));
-//   }
+  String[] stuff = loadStrings("C:/Users/Dae/Documents/GitHub/Test_Repo/CSC490/Kinect/StaticEnv/avgDepthData.txt");
+  averageDepth = int(split(stuff[0],' '));
+//  int[][] combinedDepth = new int[100][307200];
+//  for (int i = 0; i<100;i++) {
+//    context.update();
+//    int[]   depthMap = context.depthMap();
+//    combinedDepth[i] = depthMap;
+//  }
+//  for (int i = 0; i<100;i++){
+//    for (int x = 0; x<context.depthWidth()*context.depthHeight();x++){
+//      averageDepth[x]+=combinedDepth[i][x];
+//    }
+//  }
+//  for (int i = 0; i<context.depthWidth()*context.depthHeight();i++){
+//     averageDepth[i] /= 100;
+//  }
 
   stroke(255,255,255);
   smooth();

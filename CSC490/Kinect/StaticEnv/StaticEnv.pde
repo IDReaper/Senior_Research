@@ -29,7 +29,10 @@ void setup()
   }
   for (int i = 0; i<100;i++){
      for (int x = 0; x<context.depthWidth()*context.depthHeight();x++){
-       output1.print(combinedDepth[i][x] + " ");
+       if (!(i == 307199))
+         output1.print(combinedDepth[i][x] + " ");
+       else
+         output1.print(combinedDepth[i][x]);
      }
      output1.print("\n");
   }
@@ -42,7 +45,10 @@ void setup()
   }
   for (int i = 0; i<context.depthWidth()*context.depthHeight();i++){
      averageDepth[i] /= 100;
-     output2.print(averageDepth[i] + " ");
+     if (!(i == 307199))
+       output2.print(averageDepth[i] + " ");
+     else
+       output2.print(averageDepth[i]);
   }
   output1.flush();
   output1.close();
