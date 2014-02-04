@@ -4,6 +4,7 @@ SimpleOpenNI kinect;
 PImage currentFrame;
 color trackColor;
 PVector[] realWorldMap;
+PVector[] trackLoc; 
 
 void setup()
 {
@@ -70,7 +71,9 @@ void draw()
     strokeWeight(4.0);
     stroke(0);
     ellipse(closestX, closestY, 16, 16);
+    trackLoc = realWorldMap[loc];
   }
+  println(trackLoc);
 }
 void mousePressed() {
   color c = get(mouseX, mouseY);
