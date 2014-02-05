@@ -3,26 +3,26 @@ SimpleOpenNI kinect;
 // Frame
 PImage currentFrame;
 color trackColor;
-PVector[] realWorldMap;
+PrintWriter output1;
 
 void setup()
 {
   size(640, 480);
   kinect = new SimpleOpenNI(this);
-  kinect.setMirror(false);
   kinect.enableRGB();
-  kinect.enableDepth();
 
   trackColor = color (255, 0, 0);
   smooth ();
 
   currentFrame = createImage (640, 480, RGB);
+  
+  output1 = createWriter("rgbVal.txt");
+
 }
 
 void draw()
 {
   kinect.update();
-  realWorldMap = kinect.depthMapRealWorld();
 
   currentFrame = kinect.rgbImage ();
   image(currentFrame, 0, 0);
@@ -73,13 +73,21 @@ void draw()
   }
 }
 void mousePressed() {
+  
+
+  
   color c = get(mouseX, mouseY);
-  println("r: " + red(c) + " g: " + green(c) + " b: " + blue(c));
+  output1.println("r: " + red(c) + " g: " + green(c) + " b: " + blue(c));
 
   // Save color where the mouse is clicked in trackColor variable
   int loc = mouseX + mouseY*(currentFrame.width);
   println (loc);
 
   trackColor = currentFrame.pixels[loc];
+  
+  output1.flush();
+  
 }
+
+
 
