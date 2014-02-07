@@ -4,7 +4,7 @@ SimpleOpenNI kinect;
 PImage currentFrame;
 color trackColor;
 PVector[] realWorldMap;
-PVector[] trackLoc; 
+PVector trackLoc; 
 
 void setup()
 {
@@ -31,7 +31,7 @@ void draw()
   currentFrame.loadPixels();
 
   // Before we begin searching, the "world record" for closest color is set to a high number that is easy for the first pixel to beat.
-  float worldRecord = 500;
+  float worldRecord = 100;
 
   // XY coordinate of closest color
   int closestX = 0;
@@ -43,12 +43,15 @@ void draw()
       int loc = x + y*currentFrame.width;
       // What is current color
       color currentColor = currentFrame.pixels[loc];
+      //color currentColor = color(0, 0, 255);
       float r1 = red(currentColor);
       float g1 = green(currentColor);
       float b1 = blue(currentColor);
       float r2 = red(trackColor);
       float g2 = green(trackColor);
       float b2 = blue(trackColor);
+      
+      trackColor = color(53, 78, 139);
 
       // Using euclidean distance to compare colors
       float d = dist(r1, g1, b1, r2, g2, b2); // We are using the dist( ) function to compare the current color with the color we are tracking.
@@ -71,9 +74,9 @@ void draw()
     strokeWeight(4.0);
     stroke(0);
     ellipse(closestX, closestY, 16, 16);
-    trackLoc = realWorldMap[loc];
+    trackLoc = realWorldMap[closestX + closestY*currentFrame.width];
+    println(trackLoc);
   }
-  println(trackLoc);
 }
 void mousePressed() {
   color c = get(mouseX, mouseY);

@@ -51,7 +51,7 @@ void draw()
       float b2 = blue(trackColor);
       
       trackColor = color(53, 78, 139);
-
+      //trackColor = color(155,15,15);
       // Using euclidean distance to compare colors
       float d = dist(r1, g1, b1, r2, g2, b2); // We are using the dist( ) function to compare the current color with the color we are tracking.
 
