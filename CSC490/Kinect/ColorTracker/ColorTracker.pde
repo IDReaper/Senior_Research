@@ -4,6 +4,9 @@ SimpleOpenNI kinect;
 PImage currentFrame;
 color trackColor;
 PrintWriter output1;
+int[] distXY = new int[4];
+
+
 
 void setup()
 {
@@ -50,8 +53,8 @@ void draw()
       float g2 = green(trackColor);
       float b2 = blue(trackColor);
       
-      trackColor = color(53, 78, 139);
-      //trackColor = color(155,15,15);
+      //trackColor = color(53, 78, 139); //blue ball
+      trackColor = color(155,15,15); //orange reflectors
       // Using euclidean distance to compare colors
       float d = dist(r1, g1, b1, r2, g2, b2); // We are using the dist( ) function to compare the current color with the color we are tracking.
 
@@ -72,8 +75,27 @@ void draw()
     fill(trackColor);
     strokeWeight(4.0);
     stroke(0);
-    ellipse(closestX, closestY, 16, 16);
+    //ellipse(closestX, closestY, 16, 16);
+    int dist = sqDist(distXY[0],distXY[1],closestX,closestY);
+    if (distXY[0] == 0 && distXY[1] == 0){
+      distXY[0] = closestX;
+      distXY[1] = closestY;  
+    }
+    if (dist > 25000 && dist < 75000){
+      distXY[2] = closestX;
+      distXY[3] = closestY;
+    }
+    else{
+      distXY[0] = closestX;
+      distXY[1] = closestY; 
+    }
+    //ellipse(distXY[0],distXY[1], 16, 16);
+    //ellipse(distXY[2],distXY[3], 10, 10);
+    int midX,midY = midP(distXY[0],distXY[1],distXY[2],distXY[3]);
+    fill(color(0,0,0));
+    ellipse(midX,midY, 16, 16);
   }
+  
 }
 
 void mousePressed() {
@@ -91,5 +113,14 @@ void mousePressed() {
   
 }
 
+int sqDist(int x1, int y1, int x2, int y2){
+   int dist = int(pow((x2-x1),2)+pow((y2-y1),2));
+   return dist;
+}
 
+int midP(int x1, int y1, int x2, int y2){
+   int midX = int((x2+x1)/2);
+   int midY = int((y2+y1)/2);
+   return midX,midY;
+}
 
