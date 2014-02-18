@@ -3,10 +3,10 @@ SimpleOpenNI kinect;
 // Frame
 PImage currentFrame;
 color trackColor;
-PrintWriter output1;
 int[] distXY = new int[4];
 int[] mid1 = new int[2];
 int [] mid2 = new int[2];
+int [] averageDepth = new int[307200];
 
 
 
@@ -15,20 +15,22 @@ void setup()
   size(640, 480);
   kinect = new SimpleOpenNI(this);
   kinect.enableRGB();
+  kinect.enableDepth();
 
   trackColor = color (255, 0, 0);
   smooth ();
 
   currentFrame = createImage (640, 480, RGB);
+  String[] stuff = loadStrings("C:/Users/Dae/Documents/GitHub/Test_Repo/CSC490/Kinect/StaticEnv/avgDepthData.txt");
+  averageDepth = int(split(stuff[0],' '));
   
-  output1 = createWriter("rgbVal.txt");
-
 }
 
 void draw()
 {
+  background(color(0,0,0));
   kinect.update();
-
+  int[]   depthMap = kinect.depthMap();
   currentFrame = kinect.rgbImage ();
   image(currentFrame, 0, 0);
 
@@ -91,6 +93,14 @@ void draw()
       distXY[0] = closestX;
       distXY[1] = closestY; 
     }
+    int loc = mid1[0]+mid1[1]*currentFrame.width;
+    if (depthMap[loc]-averageDepth[loc]>-100 && depthMap[loc]-averageDepth[loc]<100){
+          ellipse(distXY[0],distXY[1], 16, 16);
+          ellipse(distXY[2],distXY[3], 10, 10);
+    }
+    else {
+          println("failed to draw");
+    }
     //ellipse(distXY[0],distXY[1], 16, 16);
     //ellipse(distXY[2],distXY[3], 10, 10);
     if (mid1[0] == 0){
@@ -104,7 +114,8 @@ void draw()
       mid1[0] = mid2[0];
       mid1[1] = mid2[1];
     }
-    ellipse(mid1[0],mid1[1], 16, 16);
+    
+    //ellipse(mid1[0],mid1[1], 16, 16);
   }
   
 }
@@ -112,15 +123,11 @@ void draw()
 void mousePressed() {
     
   color c = get(mouseX, mouseY);
-  output1.println("r: " + red(c) + " g: " + green(c) + " b: " + blue(c));
-
   // Save color where the mouse is clicked in trackColor variable
   int loc = mouseX + mouseY*(currentFrame.width);
   println (loc);
 
   trackColor = currentFrame.pixels[loc];
-  
-  output1.flush();
   
 }
 
