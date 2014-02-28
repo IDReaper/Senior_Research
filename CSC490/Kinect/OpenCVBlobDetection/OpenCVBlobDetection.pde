@@ -1,3 +1,4 @@
+import hypermedia.video.*;
 import java.awt.*;
 import SimpleOpenNI.*;
 
@@ -50,7 +51,7 @@ void draw() {
     //Update kinect, grab image, opencv.copy(img), remove opencv.read()
     background(0);
     context.update();
-    img = context.RGBImage();
+    img = context.rgbImage();
     opencv.copy(img);
     
     //opencv.flip( OpenCV.FLIP_HORIZONTAL );
