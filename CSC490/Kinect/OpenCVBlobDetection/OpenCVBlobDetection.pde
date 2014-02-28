@@ -19,7 +19,7 @@ SimpleOpenNI  context;
 
 void setup() {
 
-    size(w*2+30, h*2+30);
+    size(w*2+30, h+30);
     context = new SimpleOpenNI(this);
     if (context.isInit() == false)
     {
@@ -37,7 +37,8 @@ void setup() {
     opencv = new OpenCV( this );
     opencv.capture(w,h);
     
-    font = loadFont( "AndaleMono.vlw" );
+    //font = loadFont( "AndaleMono.vlw" );
+    font = createFont("",10); 
     textFont( font );
 
     println( "Drag mouse inside sketch window to change threshold" );
@@ -57,12 +58,12 @@ void draw() {
     //opencv.flip( OpenCV.FLIP_HORIZONTAL );
 
     image( opencv.image(), 10, 10 );              // RGB image
-    image( opencv.image(OpenCV.GRAY), 20+w, 10 );   // GRAY image
+    //image( opencv.image(OpenCV.GRAY), 20+w, 10 );   // GRAY image
     image( opencv.image(OpenCV.MEMORY), 10, 20+h ); // image in memory
 
     opencv.absDiff();
     opencv.threshold(threshold);
-    image( opencv.image(OpenCV.GRAY), 20+w, 20+h ); // absolute difference image
+    image( opencv.image(OpenCV.GRAY), 20+w, 10 ); // absolute difference image
 
 
     // working with blobs
@@ -71,7 +72,7 @@ void draw() {
     noFill();
 
     pushMatrix();
-    translate(20+w,20+h);
+    translate(20+w,10);
     
     for( int i=0; i<blobs.length; i++ ) {
 
