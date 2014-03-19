@@ -134,7 +134,6 @@ if (x mod gridSize == 0) and (y mod gridSize == 0)
             <string>if keyboard_check(vk_space)
 {
     room_goto(choose(room0,room1,room2, room3))
-    room_
 }
 </string>
           </argument>

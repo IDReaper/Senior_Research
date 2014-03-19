@@ -8,12 +8,20 @@ OpenCV opencv;
 
 int w = 640;
 int h = 480;
-int threshold = 80;
+int threshold = 55;
+int droneIDX;
+int ballIDX;
+int[] error_rgb =  {27,6,28};
+
+Point centroid;
+Point[] points;
 
 boolean find=true;
 
 PFont font;
 PImage img;
+
+color trackColor = color(227,12,56);
 
 SimpleOpenNI  context;
 
@@ -29,10 +37,11 @@ void setup() {
     }
 
     // mirror is by default enabled
-    context.setMirror(true);
+    context.setMirror(false);
   
     // enable RGB generation 
     context.enableRGB();
+    context.enableDepth();
 
     opencv = new OpenCV( this );
     opencv.capture(w,h);
@@ -52,12 +61,13 @@ void draw() {
     //Update kinect, grab image, opencv.copy(img), remove opencv.read()
     background(0);
     context.update();
+    PVector[] realWorldMap = context.depthMapRealWorld();
     img = context.rgbImage();
     opencv.copy(img);
     
     //opencv.flip( OpenCV.FLIP_HORIZONTAL );
 
-    image( opencv.image(), 10, 10 );              // RGB image
+    //image( opencv.image(), 10, 10 );              // RGB image
     //image( opencv.image(OpenCV.GRAY), 20+w, 10 );   // GRAY image
     image( opencv.image(OpenCV.MEMORY), 10, 20+h ); // image in memory
 
@@ -74,27 +84,45 @@ void draw() {
     pushMatrix();
     translate(20+w,10);
     
-    for( int i=0; i<blobs.length; i++ ) {
-
-        Rectangle bounding_rect  = blobs[i].rectangle;
-        float area = blobs[i].area;
-        float circumference = blobs[i].length;
-        Point centroid = blobs[i].centroid;
-        Point[] points = blobs[i].points;
-
+    for( int i=0; i<blobs.length; i++ ) {        
+      
+        centroid = blobs[i].centroid;
+        points = blobs[i].points;
+        
+        // Color tracking for bloobs
+        int loc = centroid.x +centroid.y*opencv.image().width;
+        color currentColor = opencv.image().pixels[loc];
+        if (abs(red(currentColor) - red(trackColor)) <= error_rgb[0]){
+          if (abs(green(currentColor) - green(trackColor)) <= error_rgb[1]){
+            if (abs(blue(currentColor) - blue(trackColor)) <= error_rgb[2]){
+              ballIDX = i;    
+            }
+          } 
+        }
+    }       
+    
         // rectangle
         noFill();
-        stroke( blobs[i].isHole ? 128 : 64 );
+        stroke( blobs[ballIDX].isHole ? 128 : 64 );
+        Rectangle bounding_rect  = blobs[ballIDX].rectangle;
         rect( bounding_rect.x, bounding_rect.y, bounding_rect.width, bounding_rect.height );
-
+        println(threshold);
 
         // centroid
+        
+        float area = blobs[ballIDX].area;
+        float circumference = blobs[ballIDX].length;
+        centroid = blobs[ballIDX].centroid;
+        points = blobs[ballIDX].points;
+        
         stroke(0,0,255);
         line( centroid.x-5, centroid.y, centroid.x+5, centroid.y );
         line( centroid.x, centroid.y-5, centroid.x, centroid.y+5 );
         noStroke();
         fill(0,0,255);
-        text( area,centroid.x+5, centroid.y+5 );
+        int loc = centroid.x +centroid.y*opencv.image().width;
+        String string = "("+nf(centroid.x,4)+","+nf(centroid.y,4)+","+nf(realWorldMap[loc].z,4,1)+")";
+        text( string,centroid.x+5, centroid.y+5 );
 
 
         fill(255,0,255,64);
@@ -109,9 +137,9 @@ void draw() {
 
         noStroke();
         fill(255,0,255);
-        text( circumference, centroid.x+5, centroid.y+15 );
+        //text( circumference, centroid.x+5, centroid.y+15 );
 
-    }
+    
     popMatrix();
 
 }

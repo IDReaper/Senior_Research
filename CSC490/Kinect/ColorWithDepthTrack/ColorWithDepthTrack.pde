@@ -21,7 +21,7 @@ void setup()
   smooth ();
 
   currentFrame = createImage (640, 480, RGB);
-  String[] stuff = loadStrings("C:/Users/Dae/Documents/GitHub/Test_Repo/CSC490/Kinect/StaticEnv/avgDepthData.txt");
+  String[] stuff = loadStrings("C:/Users/Shawn/Documents/GitHub/Test_Repo/CSC490/Kinect/StaticEnv/avgDepthData.txt");
   averageDepth = int(split(stuff[0],' '));
   
 }
