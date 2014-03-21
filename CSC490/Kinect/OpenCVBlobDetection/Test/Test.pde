@@ -11,7 +11,8 @@ int h = 480;
 int threshold = 55;
 int droneIDX;
 int ballIDX;
-int[] error_rgb =  {27,6,28};
+//int[] error_rgb =  {27,6,28};
+int[] error)rgb = {25,25,25};
 
 Point centroid;
 Point[] points;
@@ -21,14 +22,14 @@ boolean find=true;
 PFont font;
 PImage img;
 
-color trackColor = color(227,12,56);
+color trackColor = color(162,4,28);
 
 SimpleOpenNI  context;
 
 void setup() {
 
-    //size(w*2+30, h+30);
-    size(w+30, h+30);
+    size(w*2+30, h+30);
+    //size(w+30, h+30);
     context = new SimpleOpenNI(this);
     if (context.isInit() == false)
     {
@@ -69,12 +70,12 @@ void draw() {
     //opencv.flip( OpenCV.FLIP_HORIZONTAL );
 
     image( opencv.image(), 10, 10 );              // RGB image
-    //image( opencv.image(OpenCV.GRAY), 20+w, 10 );   // GRAY image
-    //image( opencv.image(OpenCV.MEMORY), 10, 20+h ); // image in memory
+    image( opencv.image(OpenCV.GRAY), 20+w, 10 );   // GRAY image
+    image( opencv.image(OpenCV.MEMORY), 10, 20+h ); // image in memory
 
     opencv.absDiff();
     opencv.threshold(threshold);
-    //image( opencv.image(OpenCV.GRAY), 20+w, 10 ); // absolute difference image
+    image( opencv.image(OpenCV.GRAY), 20+w, 10 ); // absolute difference image
 
 
     // working with blobs
@@ -83,7 +84,7 @@ void draw() {
     noFill();
 
     pushMatrix();
-    //translate(20+w,10);
+    translate(20+w,10);
     
     for( int i=0; i<blobs.length; i++ ) {        
       
