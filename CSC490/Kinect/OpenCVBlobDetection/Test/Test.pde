@@ -8,11 +8,10 @@ OpenCV opencv;
 
 int w = 640;
 int h = 480;
-int threshold = 55;
-int droneIDX;
-int ballIDX;
-//int[] error_rgb =  {27,6,28};
-int[] error)rgb = {25,25,25};
+int threshold = 80;
+int [] IDX = new int [2]
+int idxChoice = 0;
+Point mouse;
 
 Point centroid;
 Point[] points;
@@ -28,7 +27,7 @@ SimpleOpenNI  context;
 
 void setup() {
 
-    size(w*2+30, h+30);
+    size(w*2+30, h*2+30);
     //size(w+30, h+30);
     context = new SimpleOpenNI(this);
     if (context.isInit() == false)
@@ -91,27 +90,20 @@ void draw() {
         centroid = blobs[i].centroid;
         points = blobs[i].points;
         
-        // Color tracking for bloobs
-        int loc = centroid.x +centroid.y*opencv.image().width;
-        color currentColor = opencv.image().pixels[loc];
-        if (abs(red(currentColor) - red(trackColor)) <= error_rgb[0]){
-          if (abs(green(currentColor) - green(trackColor)) <= error_rgb[1]){
-            if (abs(blue(currentColor) - blue(trackColor)) <= error_rgb[2]){
-              ballIDX = i;
-            }
-          } 
-        }
+        float d = dist(centroid.x,centroid.y, mouse.x,mouse.y)
+        if (d < 10)
+          IDX[idxChoice] = i;
     }       
     
     // rectangle
     noFill();
-    stroke( blobs[ballIDX].isHole ? 128 : 64 );
+    stroke( blobs[IDX[idxChoice]].isHole ? 128 : 64 );
     Rectangle bounding_rect  = blobs[ballIDX].rectangle;
     rect( bounding_rect.x, bounding_rect.y, bounding_rect.width, bounding_rect.height );
 
     // centroid
-    centroid = blobs[ballIDX].centroid;
-    points = blobs[ballIDX].points;
+    centroid = blobs[IDX[idxChoice]].centroid;
+    points = blobs[IDX[idxChoice]].points;
     
     stroke(0,0,255);
     line( centroid.x-5, centroid.y, centroid.x+5, centroid.y );
@@ -128,11 +120,20 @@ void draw() {
 
 void keyPressed() {
     if ( key==' ' ) opencv.remember();
+    if ( key ==',') idxChoice = 0;
+    if ( key =='.') idxChoice = 1;
 }
 
 void mouseDragged() {
     threshold = int( map(mouseX,0,width,0,255) );
 }
+
+void mousePressed() {
+  mouse.x = mouseX;
+  mouse.y = mouseY;
+  
+}
+
 
 public void stop() {
     opencv.stop();
