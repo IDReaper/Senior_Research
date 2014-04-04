@@ -8,10 +8,10 @@ OpenCV opencv;
 
 int w = 640;
 int h = 480;
-int threshold = 80;
-int [] IDX = new int [2]
-int idxChoice = 0;
-Point mouse;
+int threshold = 55;
+int droneIDX;
+int ballIDX=0;
+int [] IDX = new int [2];
 
 Point centroid;
 Point[] points;
@@ -21,14 +21,11 @@ boolean find=true;
 PFont font;
 PImage img;
 
-color trackColor = color(162,4,28);
-
 SimpleOpenNI  context;
 
 void setup() {
 
-    size(w*2+30, h*2+30);
-    //size(w+30, h+30);
+    size(w*2+30, h+30);
     context = new SimpleOpenNI(this);
     if (context.isInit() == false)
     {
@@ -69,7 +66,7 @@ void draw() {
     //opencv.flip( OpenCV.FLIP_HORIZONTAL );
 
     image( opencv.image(), 10, 10 );              // RGB image
-    image( opencv.image(OpenCV.GRAY), 20+w, 10 );   // GRAY image
+    //image( opencv.image(OpenCV.GRAY), 20+w, 10 );   // GRAY image
     image( opencv.image(OpenCV.MEMORY), 10, 20+h ); // image in memory
 
     opencv.absDiff();
@@ -78,62 +75,117 @@ void draw() {
 
 
     // working with blobs
-    Blob[] blobs = opencv.blobs( 100, w*h/3, 20, true );
+    Blob[] blobs = opencv.blobs( 1000, 15000, 20, true );
 
     noFill();
 
     pushMatrix();
     translate(20+w,10);
     
-    for( int i=0; i<blobs.length; i++ ) {        
-      
-        centroid = blobs[i].centroid;
-        points = blobs[i].points;
+    for( int i=0; i<blobs.length; i++ ) {
+        int ballCount = 0;
+        int droneCount = 0; 
+        int[] pix = blobs[i].pixels();
+        for (j=0; i<pix.length; j++){
+          currentColor = pix[j];
+          if (red(currentColor) >= 200){
+            if (green(currentColor) >= 50 && green(currentColor) <= 75){
+              if (blue(currentColor) >= 50 && blue(currentColor) <= 75){
+                ballCount += 1;
+              }
+            }
+          }
+          if (red(currentColor) <= 50){
+            if (green(currentColor) <= 50){
+              if (blue(currentColor) <= 50){
+                droneCount += 1;
+              }
+            }
+          }
+        }
+        if (ballCount/pix.length>=.7 && ballCount > droneCount)
+          IDX[0] = i;
+        else if (droneCount/pix.length >= .7 && droneCount > ballcount)
+          IDX[1] = i;
+    }
+    
+//    for( int i=0; i<blobs.length; i++ ) {        
+//      
+//        centroid = blobs[i].centroid;
+//        points = blobs[i].points;
+//        
+//        // Color tracking for bloobs
+//        int loc = centroid.x +centroid.y*opencv.image().width;
+//        color currentColor = opencv.image().pixels[loc];
+//        
+//        if (red(currentColor) >= 200){
+//          if (green(currentColor) >= 50 && green(currentColor) <= 75){
+//            if (blue(currentColor) >= 50 && blue(currentColor) <= 75){
+//              IDX[0] = i;
+//            }
+//          }
+//        }
+//        if (red(currentColor) <= 50){
+//          if (green(currentColor) <= 50){
+//            if (blue(currentColor) <= 50){
+//              IDX[1] = i;
+//            }
+//          }
+//        }
+//    }       
+    
+    for (int i = 0; i<IDX.length; i++){
+      try{
+        // rectangle
+        noFill();
+        stroke( blobs[IDX[i]].isHole ? 128 : 64 );
+        Rectangle bounding_rect  = blobs[IDX[i]].rectangle;
+        rect( bounding_rect.x, bounding_rect.y, bounding_rect.width, bounding_rect.height );
+        println(threshold);
+
+        // centroid
         
-        float d = dist(centroid.x,centroid.y, mouse.x,mouse.y)
-        if (d < 10)
-          IDX[idxChoice] = i;
-    }       
-    
-    // rectangle
-    noFill();
-    stroke( blobs[IDX[idxChoice]].isHole ? 128 : 64 );
-    Rectangle bounding_rect  = blobs[ballIDX].rectangle;
-    rect( bounding_rect.x, bounding_rect.y, bounding_rect.width, bounding_rect.height );
+        float area = blobs[IDX[i]].area;
+        float circumference = blobs[IDX[i]].length;
+        centroid = blobs[IDX[i]].centroid;
+        points = blobs[IDX[i]].points;
+        int loc = centroid.x +centroid.y*opencv.image().width;
+        float depth = realWorldMap[loc].z;
+        
+        stroke(0,0,255);
+        line( centroid.x-5, centroid.y, centroid.x+5, centroid.y );
+        line( centroid.x, centroid.y-5, centroid.x, centroid.y+5 );
+        noStroke();
+        fill(0,0,255);
+        String string = "("+nf(centroid.x,4)+","+nf(centroid.y,4)+","+nf(depth,4,1)+")";
+        text( string,centroid.x+5, centroid.y+5 );
 
-    // centroid
-    centroid = blobs[IDX[idxChoice]].centroid;
-    points = blobs[IDX[idxChoice]].points;
-    
-    stroke(0,0,255);
-    line( centroid.x-5, centroid.y, centroid.x+5, centroid.y );
-    line( centroid.x, centroid.y-5, centroid.x, centroid.y+5 );
-    noStroke();
-    fill(0,0,255);
-    int loc = centroid.x +centroid.y*opencv.image().width;
-    String string = "("+nf(centroid.x,4)+","+nf(centroid.y,4)+","+nf(realWorldMap[loc].z,4,1)+")";
-    text( string,centroid.x+5, centroid.y+5 );
-    
+
+        fill(255,0,255,64);
+        stroke(255,0,255);
+        if ( points.length>0 ) {
+            beginShape();
+            for( int j=0; j<points.length; j++ ) {
+                vertex( points[j].x, points[j].y );
+            }
+            endShape(CLOSE);
+        }
+
+        noStroke();
+        fill(255,0,255);
+        //text( circumference, centroid.x+5, centroid.y+15 );
+      } catch {continue}
+    }
     popMatrix();
-
 }
 
 void keyPressed() {
     if ( key==' ' ) opencv.remember();
-    if ( key ==',') idxChoice = 0;
-    if ( key =='.') idxChoice = 1;
 }
 
 void mouseDragged() {
     threshold = int( map(mouseX,0,width,0,255) );
 }
-
-void mousePressed() {
-  mouse.x = mouseX;
-  mouse.y = mouseY;
-  
-}
-
 
 public void stop() {
     opencv.stop();
