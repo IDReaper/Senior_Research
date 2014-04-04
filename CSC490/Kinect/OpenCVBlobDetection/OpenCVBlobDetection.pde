@@ -11,7 +11,6 @@ int h = 480;
 int threshold = 55;
 int droneIDX;
 int ballIDX=0;
-int [] IDX = new int [2];
 
 Point centroid;
 Point[] points;
@@ -81,6 +80,7 @@ void draw() {
 
     pushMatrix();
     translate(20+w,10);
+    int [] IDX = new int [2];
     
     for( int i=0; i<blobs.length; i++ ) {        
       
@@ -92,8 +92,8 @@ void draw() {
         color currentColor = opencv.image().pixels[loc];
         
         if (red(currentColor) >= 200){
-          if (green(currentColor) >= 50 && green(currentColor) <= 75){
-            if (blue(currentColor) >= 50 && blue(currentColor) <= 75){
+          if (green(currentColor) <= 75){
+            if (blue(currentColor) <= 75){
               IDX[0] = i;
             }
           }
@@ -108,44 +108,50 @@ void draw() {
     }       
     
     for (int i = 0; i<IDX.length; i++){
-      // rectangle
-        noFill();
-        stroke( blobs[IDX[i]].isHole ? 128 : 64 );
-        Rectangle bounding_rect  = blobs[IDX[i]].rectangle;
-        rect( bounding_rect.x, bounding_rect.y, bounding_rect.width, bounding_rect.height );
-        println(threshold);
-
-        // centroid
-        
-        float area = blobs[IDX[i]].area;
-        float circumference = blobs[IDX[i]].length;
-        centroid = blobs[IDX[i]].centroid;
-        points = blobs[IDX[i]].points;
-        int loc = centroid.x +centroid.y*opencv.image().width;
-        float depth = realWorldMap[loc].z;
-        
-        stroke(0,0,255);
-        line( centroid.x-5, centroid.y, centroid.x+5, centroid.y );
-        line( centroid.x, centroid.y-5, centroid.x, centroid.y+5 );
-        noStroke();
-        fill(0,0,255);
-        String string = "("+nf(centroid.x,4)+","+nf(centroid.y,4)+","+nf(depth,4,1)+")";
-        text( string,centroid.x+5, centroid.y+5 );
-
-
-        fill(255,0,255,64);
-        stroke(255,0,255);
-        if ( points.length>0 ) {
-            beginShape();
-            for( int j=0; j<points.length; j++ ) {
-                vertex( points[j].x, points[j].y );
-            }
-            endShape(CLOSE);
-        }
-
-        noStroke();
-        fill(255,0,255);
-        //text( circumference, centroid.x+5, centroid.y+15 );
+        try{
+        // rectangle
+          noFill();
+          stroke( blobs[IDX[i]].isHole ? 128 : 64 );
+          Rectangle bounding_rect  = blobs[IDX[i]].rectangle;
+          rect( bounding_rect.x, bounding_rect.y, bounding_rect.width, bounding_rect.height );
+          println(threshold);
+  
+          // centroid
+          
+          float area = blobs[IDX[i]].area;
+          float circumference = blobs[IDX[i]].length;
+          centroid = blobs[IDX[i]].centroid;
+          points = blobs[IDX[i]].points;
+          int loc = centroid.x +centroid.y*opencv.image().width;
+          float depth = realWorldMap[loc].z;
+          
+          stroke(0,0,255);
+          line( centroid.x-5, centroid.y, centroid.x+5, centroid.y );
+          line( centroid.x, centroid.y-5, centroid.x, centroid.y+5 );
+          noStroke();
+          fill(0,0,255);
+          String string;
+          if (i == 0){
+            string = "("+nf(centroid.x,4)+","+nf(centroid.y,4)+","+nf(depth,4,1)+", red)";}
+           else{
+             string = "("+nf(centroid.x,4)+","+nf(centroid.y,4)+","+nf(depth,4,1)+", black)";}
+          text( string,centroid.x+5, centroid.y+5 );
+  
+  
+          fill(255,0,255,64);
+          stroke(255,0,255);
+          if ( points.length>0 ) {
+              beginShape();
+              for( int j=0; j<points.length; j++ ) {
+                  vertex( points[j].x, points[j].y );
+              }
+              endShape(CLOSE);
+          }
+  
+          noStroke();
+          fill(255,0,255);
+          //text( circumference, centroid.x+5, centroid.y+15 );
+        } catch(Exception e){println("error index");}
 
     }
     popMatrix();

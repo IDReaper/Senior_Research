@@ -85,9 +85,9 @@ void draw() {
     for( int i=0; i<blobs.length; i++ ) {
         int ballCount = 0;
         int droneCount = 0; 
-        int[] pix = blobs[i].pixels();
-        for (j=0; i<pix.length; j++){
-          currentColor = pix[j];
+        int[] pix = blobs[i].pixels;
+        for (int j=0; i<pix.length; j++){
+          color currentColor = pix[j];
           if (red(currentColor) >= 200){
             if (green(currentColor) >= 50 && green(currentColor) <= 75){
               if (blue(currentColor) >= 50 && blue(currentColor) <= 75){
@@ -103,10 +103,14 @@ void draw() {
             }
           }
         }
+        if (pix.length != 0){
+          println(ballCount);
+          println(droneCount);
         if (ballCount/pix.length>=.7 && ballCount > droneCount)
           IDX[0] = i;
-        else if (droneCount/pix.length >= .7 && droneCount > ballcount)
+        if (droneCount/pix.length >= .7 && droneCount > ballCount)
           IDX[1] = i;
+        }
     }
     
 //    for( int i=0; i<blobs.length; i++ ) {        
@@ -135,13 +139,13 @@ void draw() {
 //    }       
     
     for (int i = 0; i<IDX.length; i++){
-      try{
+      println(IDX[i]);
+      //try{
         // rectangle
         noFill();
         stroke( blobs[IDX[i]].isHole ? 128 : 64 );
         Rectangle bounding_rect  = blobs[IDX[i]].rectangle;
         rect( bounding_rect.x, bounding_rect.y, bounding_rect.width, bounding_rect.height );
-        println(threshold);
 
         // centroid
         
@@ -174,7 +178,7 @@ void draw() {
         noStroke();
         fill(255,0,255);
         //text( circumference, centroid.x+5, centroid.y+15 );
-      } catch {continue}
+      //} catch (Exception e){println("Index Error");}
     }
     popMatrix();
 }
