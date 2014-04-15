@@ -1,3 +1,11 @@
+import com.shigeodayo.ardrone.manager.*;
+import com.shigeodayo.ardrone.navdata.*;
+import com.shigeodayo.ardrone.utils.*;
+import com.shigeodayo.ardrone.processing.*;
+import com.shigeodayo.ardrone.command.*;
+import com.shigeodayo.ardrone.*;
+import com.shigeodayo.ardrone.video.*;
+
 import hypermedia.video.*;
 import java.awt.*;
 import SimpleOpenNI.*;
@@ -8,6 +16,7 @@ ARDroneForP5 ardrone;
 
 OpenCV opencv;
 
+
 int w = 640;
 int h = 480;
 int threshold = 50;
@@ -17,6 +26,7 @@ int mousey;
 
 boolean find=true;
 int drag = 0;
+int s = 0;
 int blob;
 Blob[] blobs;
 Point TrackCent;
@@ -26,8 +36,9 @@ PImage img;
 
 SimpleOpenNI  context;
 
-void setup() {
-  
+void setup() { 
+
+  size(w*2+30, h*2+30);
   
   ardrone = new ARDroneForP5("192.168.1.1");
   //connect to the AR.Drone.
@@ -40,10 +51,6 @@ void setup() {
   ardrone.start();
   
   
-  
-  
-
-  size(w*2+30, h+30);
   context = new SimpleOpenNI(this);
   if (context.isInit() == false)
   {
@@ -71,6 +78,8 @@ void setup() {
 }
 
 void draw() {
+  
+  //println(s);
   //Update kinect, grab image, opencv.copy(img), remove opencv.read()
   background(0);
   context.update();
@@ -78,20 +87,21 @@ void draw() {
   img = context.rgbImage();
   opencv.copy(img);
 
-  PImage droneImg = ardrone.getVideoImage(true);
+  PImage droneImg = ardrone.getVideoImage(false);
   if (droneImg == null)
     return;
   //opencv.flip( OpenCV.FLIP_HORIZONTAL );
 
-  image(droneImg, 20+w, 10);
+  image(droneImg, 0, -50);
 
-  image( opencv.image(), 10, 10 );              // RGB image
+  //image( opencv.image(), 10, 10 );  // RGB image
+  image( opencv.image(), 10, 10+h );
   //image( opencv.image(OpenCV.GRAY), 20+w, 10 );   // GRAY image
-  image( opencv.image(OpenCV.MEMORY), 10, 20+h ); // image in memory
+  //image( opencv.image(OpenCV.MEMORY), 10, 20+h ); // image in memory
 
   opencv.absDiff();
   opencv.threshold(threshold);
-  image( opencv.image(OpenCV.GRAY), 20+w, 10 ); // absolute difference image
+  image( opencv.image(OpenCV.GRAY), 20+w, 10+h ); // absolute difference image
 
 
   float pitch = ardrone.getPitch();
@@ -166,8 +176,13 @@ void keyPressed() {
   
   if ( key == 'u'){
     ardrone.takeOff();
-    ardrone.move3D(0, 0, 0, -20);
-    
+    //x,y,z,rotate
+    //ardrone.move3D(0, 0, 0, -50);
+    while (s < 3){
+      int s = second();
+      println(s);
+    }
+    ardrone.landing();    
   }
   
   if ( key == 'i')
