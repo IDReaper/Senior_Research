@@ -26,7 +26,7 @@ int mousey;
 
 boolean find=true;
 int drag = 0;
-int s = 0;
+int s;
 int blob;
 Blob[] blobs;
 Point TrackCent;
@@ -174,16 +174,12 @@ void keyPressed() {
   if ( key == 't') drag = 1;
   if ( key == 'y') drag = 0;
   
-  if ( key == 'u'){
-    ardrone.takeOff();
+  if ( key == 'o')
+    takeoffRotate();
     //x,y,z,rotate
-    //ardrone.move3D(0, 0, 0, -50);
-    while (s < 3){
-      int s = second();
-      println(s);
-    }
-    ardrone.landing();    
-  }
+    //ardrone.move3D(0, 0, 0, -50);    
+    //ardrone.landing();    
+  
   
   if ( key == 'i')
     ardrone.landing();
@@ -208,5 +204,18 @@ void mousePressed() {
 public void stop() {
   opencv.stop();
   super.stop();
+}
+
+void takeoffRotate(){
+  s = second();
+  println(s);
+  ardrone.takeOff();
+  while(s < 10){
+    s = second();
+    println(s);
+  }
+  ardrone.move3D(0, 0, 0, -100);
+  
+    
 }
 
