@@ -67,9 +67,9 @@ void draw()
            ardrone.move3D(0,30,-5,0);
          else
            ardrone.move3D(0,0,0,0);
-         delay(400);
+         delay(800);
          ardrone.move3D(25,0,-10,0);
-         delay(1450);
+         delay(1300);
          ardrone.move3D(-25,0,0,0);
          delay(950);
          ardrone.stop();
